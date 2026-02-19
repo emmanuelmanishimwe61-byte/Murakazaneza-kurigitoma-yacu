@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Gitoma Yacu - Full Database System</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary: #ff9800;
+            --accent: #2196f3;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --success: #4caf50;
+            --dark: #2c3e50;
+            --light: #f5f5f5;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .community-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .community-badge i {
+            color: var(--secondary);
+        }
+
+        /* ===== DATABASE STATUS ===== */
+        .db-status {
+            background: var(--secondary);
+            color: var(--white);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .db-status i {
+            color: var(--white);
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            background: var(--white);
+            padding: 0.8rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        nav ul {
+            max-width: 1300px;
+            margin: 0 auto;
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: nowrap;
+            min-width: min-content;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        nav ul li a i {
+            color: var(--primary);
+        }
+
+        nav ul li a:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        nav ul li a:hover i {
+            color: var(--white);
+        }
+
+        .active-nav {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .active-nav i {
+            color: var(--white) !important;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1300px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, #1a5e1a 0%, #2e8b57 100%);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .hero::before {
+            content: "🏡🌱🤝";
+            font-size: 10rem;
+            position: absolute;
+            right: 20px;
+            bottom: -30px;
+            opacity: 0.1;
+            transform: rotate(-5deg);
+        }
+
+        .hero h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            position: relative;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .hero-stat {
+            background: rgba(255,255,255,0.2);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .hero-stat .number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .hero-stat .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: var(--transition);
+            border-left: 5px solid var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon i {
+            font-size: 2rem;
+            color: var(--white);
+        }
+
+        .stat-info h3 {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-info .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-info .trend {
+            font-size: 0.8rem;
+            color: var(--success);
+        }
+
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .action-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .action-card h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header h2 i {
+            color: var(--secondary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        /* ===== TABLES ===== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .status-badge {
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-upcoming {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-ongoing {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            margin: 0.2rem;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .action-btn.edit {
+            background: var(--secondary);
+        }
+
+        .action-btn.edit:hover {
+            background: #f57c00;
+        }
+
+        .action-btn.delete {
+            background: var(--danger);
+        }
+
+        .action-btn.delete:hover {
+            background: #d32f2f;
+        }
+
+        .action-btn.view {
+            background: var(--accent);
+        }
+
+        .action-btn.view:hover {
+            background: #1976d2;
+        }
+
+        /* ===== FORUM POSTS ===== */
+        .forum-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .forum-post {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.2rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .post-author i {
+            color: var(--primary);
+        }
+
+        .post-time {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .post-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .post-content {
+            color: #555;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .post-stats span {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .post-stats i {
+            color: var(--primary);
+            margin-right: 0.3rem;
+        }
+
+        /* ===== MARKETPLACE ===== */
+        .marketplace-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .product-image {
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .product-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover .product-actions {
+            opacity: 1;
+        }
+
+        .product-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            background: var(--white);
+            color: var(--dark);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-btn.edit {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .product-btn.delete {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .product-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .product-details {
+            padding: 1.5rem;
+        }
+
+        .product-details h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-details p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-seller {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-contact {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .product-contact button {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-contact {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-contact:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: var(--white);
+        }
+
+        .btn-whatsapp:hover {
+            background: #128C7E;
+        }
+
+        /* ===== GALLERY ===== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: var(--white);
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-actions {
+            opacity: 1;
+        }
+
+        .gallery-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            background: var(--white);
+            color: var(--dark);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-btn.edit {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        .gallery-btn.delete {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .gallery-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ===== CONTACT FORM ===== */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+        }
+
+        .contact-info h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info-item i {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+        }
+
+        .contact-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* ===== REGISTRATION FORM ===== */
+        .registration-form {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid var(--primary);
+        }
+
+        .registration-form h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--white);
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* ===== DATABASE VIEWER ===== */
+        .db-viewer {
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .db-viewer h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .db-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .db-stat-item {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .db-stat-item .label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .db-stat-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .json-viewer {
+            background: var(--dark);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 3rem 1rem 1rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .footer-section p {
+            margin-bottom: 0.8rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-section i {
+            color: var(--secondary);
+            width: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--white);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--white);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 3000;
+            animation: slideInRight 0.3s ease;
+            border-left: 5px solid var(--primary);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Gitoma Yacu</h1>
+                    <span>Full Database System</span>
+                </div>
+            </div>
+            <div class="community-badge">
+                <i class="fas fa-database"></i>
+                <span>Database: <span id="db-total-items">0</span> items</span>
+                <span class="db-status"><i class="fas fa-check-circle"></i> Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <ul>
+            <li><a href="#" onclick="showSection('dashboard')" class="active-nav" id="nav-dashboard"><i class="fas fa-home"></i> Intangiriro</a></li>
+            <li><a href="#" onclick="showSection('community')" id="nav-community"><i class="fas fa-users"></i> Umuryango</a></li>
+            <li><a href="#" onclick="showSection('events')" id="nav-events"><i class="fas fa-calendar-alt"></i> Ibirori</a></li>
+            <li><a href="#" onclick="showSection('forum')" id="nav-forum"><i class="fas fa-comments"></i> Ikibazo</a></li>
+            <li><a href="#" onclick="showSection('marketplace')" id="nav-marketplace"><i class="fas fa-store"></i> Isoko</a></li>
+            <li><a href="#" onclick="showSection('gallery')" id="nav-gallery"><i class="fas fa-images"></i> Ibikorwa</a></li>
+            <li><a href="#" onclick="showSection('database')" id="nav-database"><i class="fas fa-database"></i> Database</a></li>
+            <li><a href="#" onclick="showSection('contact')" id="nav-contact"><i class="fas fa-envelope"></i> Twandikire</a></li>
+        </ul>
+    </nav>
+
+    <!-- CONTAINER PRINCIPAL -->
+    <div class="container">
+        <!-- DASHBOARD SECTION (INTANGIRIRO) -->
+        <div id="dashboard-section">
+            <div class="hero">
+                <h2>Murakaza neza kuri Gitoma Yacu Database System! 👋</h2>
+                <p>Ahantu hose abaturage bo mu mudugudu wa Gitoma bahurira, bakoresha database imwe hamwe.</p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="number" id="dashboard-total-members">0</span>
+                        <span class="label">Umuryango</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="number" id="dashboard-total-events">0</span>
+                        <span class="label">Ibirori</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="number" id="dashboard-total-posts">0</span>
+                        <span class="label">Ikibazo</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="number" id="dashboard-total-products">0</span>
+                        <span class="label">Isoko</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="number" id="dashboard-total-photos">0</span>
+                        <span class="label">Ibikorwa</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="number" id="dashboard-total-contacts">0</span>
+                        <span class="label">Twandikire</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="openRegistrationModal('community')">
+                    <i class="fas fa-user-plus"></i>
+                    <h4>Umuryango</h4>
+                    <p>Kwiyandikisha</p>
+                </div>
+                <div class="action-card" onclick="openRegistrationModal('event')">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h4>Ibirori</h4>
+                    <p>Kwiyandikisha</p>
+                </div>
+                <div class="action-card" onclick="openRegistrationModal('post')">
+                    <i class="fas fa-comment-plus"></i>
+                    <h4>Ikibazo</h4>
+                    <p>Tangiza ikiganiro</p>
+                </div>
+                <div class="action-card" onclick="openRegistrationModal('product')">
+                    <i class="fas fa-tag"></i>
+                    <h4>Isoko</h4>
+                    <p>Gurisha igicuruzwa</p>
+                </div>
+                <div class="action-card" onclick="openRegistrationModal('photo')">
+                    <i class="fas fa-camera"></i>
+                    <h4>Ibikorwa</h4>
+                    <p>Ongeraho ifoto</p>
+                </div>
+                <div class="action-card" onclick="openRegistrationModal('contact')">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Twandikire</h4>
+                    <p>Ohereza ubutumwa</p>
+                </div>
+            </div>
+
+            <!-- DATABASE STATS -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-database"></i> Database Statistics</h2>
+                    <button class="btn-primary" onclick="refreshDatabase()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div class="db-stats">
+                    <div class="db-stat-item">
+                        <div class="label">Umuryango</div>
+                        <div class="value" id="stat-community">0</div>
+                    </div>
+                    <div class="db-stat-item">
+                        <div class="label">Ibirori</div>
+                        <div class="value" id="stat-events">0</div>
+                    </div>
+                    <div class="db-stat-item">
+                        <div class="label">Ikibazo</div>
+                        <div class="value" id="stat-posts">0</div>
+                    </div>
+                    <div class="db-stat-item">
+                        <div class="label">Isoko</div>
+                        <div class="value" id="stat-products">0</div>
+                    </div>
+                    <div class="db-stat-item">
+                        <div class="label">Ibikorwa</div>
+                        <div class="value" id="stat-photos">0</div>
+                    </div>
+                    <div class="db-stat-item">
+                        <div class="label">Twandikire</div>
+                        <div class="value" id="stat-contacts">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UMURYANGO SECTION -->
+        <div id="community-section" style="display: none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Umuryango - Abanyamuryango</h2>
+                    <button class="btn-primary" onclick="openRegistrationModal('community')"><i class="fas fa-user-plus"></i> Kwiyandikisha</button>
+                </div>
+                
+                <!-- Registration Form -->
+                <div class="registration-form" id="community-reg-form" style="display: none;">
+                    <h3><i class="fas fa-user-plus"></i> Kwiyandikisha mu Muryango</h3>
+                    <form id="communityRegForm" onsubmit="event.preventDefault(); registerMember();">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Amazina yombi *</label>
+                                <input type="text" id="reg-name" required placeholder="Mukamana Jeanne">
+                            </div>
+                            <div class="form-group">
+                                <label>Telephone *</label>
+                                <input type="tel" id="reg-phone" required placeholder="0788 123 456">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="reg-email" placeholder="email@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Umudugudu *</label>
+                                <select id="reg-village" required>
+                                    <option value="">Hitamo...</option>
+                                    <option value="Gitoma">Gitoma</option>
+                                    <option value="Nguvu1">Nguvu1</option>
+                                    <option value="Nguvu2">Nguvu2</option>
+                                    <option value="Mushongi">Mushongi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Komite ushaka kwinjira</label>
+                                <select id="reg-committee">
+                                    <option value="">Hitamo...</option>
+                                    <option value="Amazi">Amazi</option>
+                                    <option value="Ibidukikije">Ibidukikije</option>
+                                    <option value="Urubyiruko">Urubyiruko</option>
+                                    <option value="Ubufasha">Ubufasha</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Imyaka</label>
+                                <input type="number" id="reg-age" placeholder="Imyaka yawe">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Icyitonderwa</label>
+                            <textarea id="reg-notes" placeholder="Icyo ushaka kumenyesha..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Bika</button>
+                            <button type="button" class="btn-secondary" onclick="hideRegistrationForm('community')"><i class="fas fa-times"></i> Gusiba</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Members Table -->
+                <div class="table-container">
+                    <table id="community-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Amazina</th>
+                                <th>Telephone</th>
+                                <th>Email</th>
+                                <th>Umudugudu</th>
+                                <th>Komite</th>
+                                <th>Igihe</th>
+                                <th>Ibikorwa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="community-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- IBIRORI SECTION -->
+        <div id="events-section" style="display: none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-alt"></i> Ibirori</h2>
+                    <button class="btn-primary" onclick="openRegistrationModal('event')"><i class="fas fa-plus"></i> Ongeraho igikorwa</button>
+                </div>
+                
+                <div class="table-container">
+                    <table id="events-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Izina ry'igikorwa</th>
+                                <th>Itariki</th>
+                                <th>Ahabera</th>
+                                <th>Igihe</th>
+                                <th>Imiterere</th>
+                                <th>Abazitabira</th>
+                                <th>Ibikorwa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- IKIBAZO SECTION -->
+        <div id="forum-section" style="display: none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-comments"></i> Ikibazo - Ibitekerezo</h2>
+                    <button class="btn-primary" onclick="openRegistrationModal('post')"><i class="fas fa-plus"></i> Tangiza ikiganiro</button>
+                </div>
+                
+                <div class="forum-posts" id="forum-posts-container"></div>
+            </div>
+        </div>
+
+        <!-- ISOKO SECTION -->
+        <div id="marketplace-section" style="display: none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-store"></i> Isoko - Ibicuruzwa</h2>
+                    <button class="btn-primary" onclick="openRegistrationModal('product')"><i class="fas fa-plus"></i> Tangiza igurisha</button>
+                </div>
+                
+                <div class="marketplace-grid" id="marketplace-container"></div>
+            </div>
+        </div>
+
+        <!-- IBIKORWA SECTION -->
+        <div id="gallery-section" style="display: none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-images"></i> Ibikorwa - Amafoto</h2>
+                    <button class="btn-primary" onclick="openRegistrationModal('photo')"><i class="fas fa-upload"></i> Ongeraho ifoto</button>
+                </div>
+                
+                <div class="gallery-grid" id="gallery-container"></div>
+            </div>
+        </div>
+
+        <!-- DATABASE SECTION -->
+        <div id="database-section" style="display: none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-database"></i> Database Management</h2>
+                    <div>
+                        <button class="btn-secondary" onclick="exportDatabase()"><i class="fas fa-download"></i> Export</button>
+                        <button class="btn-primary" onclick="importDatabase()"><i class="fas fa-upload"></i> Import</button>
+                        <button class="btn-danger" onclick="clearDatabase()"><i class="fas fa-trash"></i> Clear All</button>
+                    </div>
+                </div>
+                
+                <div class="db-stats" id="db-full-stats"></div>
+                
+                <div class="db-viewer">
+                    <h3><i class="fas fa-code"></i> Full Database JSON</h3>
+                    <div class="json-viewer" id="full-json-viewer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TWANDIKIRE SECTION -->
+        <div id="contact-section" style="display: none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-envelope"></i> Twandikire</h2>
+                    <button class="btn-primary" onclick="openRegistrationModal('contact')"><i class="fas fa-plus"></i> Ohereza ubutumwa</button>
+                </div>
+                
+                <div class="table-container">
+                    <table id="contact-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Amazina</th>
+                                <th>Telephone</th>
+                                <th>Email</th>
+                                <th>Intego</th>
+                                <th>Ubutumwa</th>
+                                <th>Igihe</th>
+                                <th>Ibikorwa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contact-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTRATION MODAL -->
+    <div id="registrationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('registrationModal')">&times;</span>
+            <h2 id="modal-title"><i class="fas fa-user-plus"></i> Kwiyandikisha</h2>
+            <form id="registrationForm" onsubmit="event.preventDefault(); saveRegistration();">
+                <input type="hidden" id="reg-type">
+                <div id="modal-fields"></div>
+                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Bika mu database</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
+            <h2 id="edit-modal-title"><i class="fas fa-edit"></i> Hindura</h2>
+            <form id="editForm" onsubmit="event.preventDefault(); updateItem();">
+                <input type="hidden" id="edit-id">
+                <input type="hidden" id="edit-type">
+                <div id="edit-modal-fields"></div>
+                <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Hindura</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><i class="fas fa-home"></i> Gitoma Yacu</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Umurenge wa Mpanga, Akagari ka Mushongi</p>
+                <p><i class="fas fa-phone"></i> 0798 276 792</p>
+                <p><i class="fas fa-envelope"></i> emmanuelmanishimwe61@gmail.com</p>
+            </div>
+            <div class="footer-section">
+                <h3><i class="fas fa-database"></i> Database Stats</h3>
+                <p><i class="fas fa-users"></i> Umuryango: <span id="footer-community">0</span></p>
+                <p><i class="fas fa-calendar"></i> Ibirori: <span id="footer-events">0</span></p>
+                <p><i class="fas fa-comments"></i> Ikibazo: <span id="footer-posts">0</span></p>
+                <p><i class="fas fa-store"></i> Isoko: <span id="footer-products">0</span></p>
+                <p><i class="fas fa-images"></i> Ibikorwa: <span id="footer-photos">0</span></p>
+                <p><i class="fas fa-envelope"></i> Twandikire: <span id="footer-contacts">0</span></p>
+            </div>
+            <div class="footer-section">
+                <h3><i class="fas fa-clock"></i> Igihe</h3>
+                <p><span id="current-time"></span></p>
+                <p><span id="current-date"></span></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Gitoma Yacu - Full Database System</p>
+            <p style="margin-top: 0.5rem;">Email: emmanuelmanishimwe61@gmail.com | Tel: 0798 276 792</p>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        // ==================== DATABASE STRUCTURE ====================
+        // Database imwe ihuriweho hamwe - Ibice 7 byose
+        let gitomaDatabase = {
+            community: [],      // Umuryango - Abanyamuryango
+            events: [],         // Ibirori
+            forumPosts: [],     // Ikibazo
+            products: [],       // Isoko
+            gallery: [],        // Ibikorwa
+            contacts: []        // Twandikire
+        };
+
+        // ==================== INITIALIZE DATABASE ====================
+        function initDatabase() {
+            const savedDB = localStorage.getItem('gitomaFullDatabase');
+            if (savedDB) {
+                gitomaDatabase = JSON.parse(savedDB);
+                showToast('Database yapakiye neza!', 'success');
+            } else {
+                createSampleData();
+            }
+            updateAllDisplays();
+            startTimeUpdate();
+        }
+
+        // ==================== CREATE SAMPLE DATA ====================
+        function createSampleData() {
+            const now = new Date().toISOString();
+            
+            // Umuryango
+            gitomaDatabase.community = [
+                { id: 1, name: "Mukamana Jeanne", phone: "0788123456", email: "jeanne@email.com", village: "Gitoma", committee: "Amazi", age: 34, notes: "", createdAt: now },
+                { id: 2, name: "Kagabo Pierre", phone: "0788654321", email: "pierre@email.com", village: "Nguvu1", committee: "Ibidukikije", age: 28, notes: "", createdAt: now },
+                { id: 3, name: "Uwase Alice", phone: "0788778899", email: "alice@email.com", village: "Mushongi", committee: "Urubyiruko", age: 25, notes: "", createdAt: now }
+            ];
+
+            // Ibirori
+            gitomaDatabase.events = [
+                { id: 1, name: "Umuganda rusange", date: "2026-03-25", location: "Gitoma Centre", time: "8:00-12:00", status: "upcoming", participants: 0, maxParticipants: 500, createdAt: now },
+                { id: 2, name: "Inkingo z'amatungo", date: "2026-03-27", location: "Cell Office", time: "9:00-15:00", status: "upcoming", participants: 0, maxParticipants: 200, createdAt: now },
+                { id: 3, name: "Amahugurwa y'urubyiruko", date: "2026-03-30", location: "CP Gitoma", time: "14:00-17:00", status: "upcoming", participants: 0, maxParticipants: 100, createdAt: now }
+            ];
+
+            // Ikibazo
+            gitomaDatabase.forumPosts = [
+                { id: 1, author: "Mukamana Jeanne", title: "Ikibazo cy'amazi", content: "Mu rugo rwacu amazi arabura. Hari abandi bafite ikibazo nk'iki?", comments: 0, views: 0, createdAt: now },
+                { id: 2, author: "Kagabo Pierre", title: "Gahunda y'ubworozi", content: "Hari ushaka kugura inka? Mfite inka ibiri ngurisha.", comments: 0, views: 0, createdAt: now },
+                { id: 3, author: "Uwase Alice", title: "Gufasha abana b'impfubyi", content: "Turashaka gufasha abana b'impfubyi 5 muri Gitoma.", comments: 0, views: 0, createdAt: now }
+            ];
+
+            // Isoko
+            gitomaDatabase.products = [
+                { id: 1, name: "Inkoko nzima", description: "Inkoko zorowe mu rugo", price: "8,000 FRW", seller: "Mukamana J.", village: "Gitoma", contact: "0788123456", createdAt: now },
+                { id: 2, name: "Imbuto nziza", description: "Ibirayi, ibishyimbo", price: "5,000 FRW", seller: "Kagabo P.", village: "Nguvu1", contact: "0788654321", createdAt: now },
+                { id: 3, name: "Ibikoresho by'ubuhinzi", description: "Isuka, umuhoro", price: "15,000 FRW", seller: "Habyarimana T.", village: "Gitoma", contact: "0788776655", createdAt: now }
+            ];
+
+            // Ibikorwa
+            gitomaDatabase.gallery = [
+                { id: 1, title: "Inama y'abaturage 2026", date: "2026-03-10", url: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=400", createdAt: now },
+                { id: 2, title: "Umuganda rusange 2026", date: "2026-03-05", url: "https://images.unsplash.com/photo-1593113630400-ea4288922497?w=400", createdAt: now },
+                { id: 3, title: "Amahugurwa y'urubyiruko", date: "2026-03-01", url: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400", createdAt: now }
+            ];
+
+            // Twandikire
+            gitomaDatabase.contacts = [
+                { id: 1, name: "Habimana Eric", phone: "0788112233", email: "eric@email.com", subject: "issue", message: "Amazi arabura", createdAt: now },
+                { id: 2, name: "Mukamisa Grace", phone: "0788445566", email: "grace@email.com", subject: "event", message: "Nshaka kwinjira mu birori", createdAt: now }
+            ];
+
+            saveDatabase();
+        }
+
+        // ==================== SAVE TO LOCALSTORAGE ====================
+        function saveDatabase() {
+            localStorage.setItem('gitomaFullDatabase', JSON.stringify(gitomaDatabase));
+            updateAllDisplays();
+        }
+
+        // ==================== UPDATE ALL DISPLAYS ====================
+        function updateAllDisplays() {
+            updateStats();
+            updateCommunityTable();
+            updateEventsTable();
+            updateForumPosts();
+            updateMarketplace();
+            updateGallery();
+            updateContactTable();
+            updateDatabaseView();
+            updateFooterStats();
+            updateTime();
+        }
+
+        // ==================== UPDATE STATS ====================
+        function updateStats() {
+            const community = gitomaDatabase.community.length;
+            const events = gitomaDatabase.events.length;
+            const posts = gitomaDatabase.forumPosts.length;
+            const products = gitomaDatabase.products.length;
+            const photos = gitomaDatabase.gallery.length;
+            const contacts = gitomaDatabase.contacts.length;
+            const total = community + events + posts + products + photos + contacts;
+
+            document.getElementById('db-total-items').textContent = total;
+            
+            document.getElementById('dashboard-total-members').textContent = community;
+            document.getElementById('dashboard-total-events').textContent = events;
+            document.getElementById('dashboard-total-posts').textContent = posts;
+            document.getElementById('dashboard-total-products').textContent = products;
+            document.getElementById('dashboard-total-photos').textContent = photos;
+            document.getElementById('dashboard-total-contacts').textContent = contacts;
+            
+            document.getElementById('stat-community').textContent = community;
+            document.getElementById('stat-events').textContent = events;
+            document.getElementById('stat-posts').textContent = posts;
+            document.getElementById('stat-products').textContent = products;
+            document.getElementById('stat-photos').textContent = photos;
+            document.getElementById('stat-contacts').textContent = contacts;
+        }
+
+        // ==================== UPDATE COMMUNITY TABLE ====================
+        function updateCommunityTable() {
+            const tbody = document.getElementById('community-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            gitomaDatabase.community.forEach(member => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.id}</td>
+                    <td><strong>${member.name}</strong></td>
+                    <td>${member.phone}</td>
+                    <td>${member.email || '-'}</td>
+                    <td>${member.village}</td>
+                    <td>${member.committee || '-'}</td>
+                    <td>${formatDate(member.createdAt)}</td>
+                    <td>
+                        <button class="action-btn edit" onclick="openEditModal('community', ${member.id})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="deleteItem('community', ${member.id})"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn view" onclick="viewItem('community', ${member.id})"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ==================== UPDATE EVENTS TABLE ====================
+        function updateEventsTable() {
+            const tbody = document.getElementById('events-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            gitomaDatabase.events.forEach(event => {
+                const row = document.createElement('tr');
+                let statusClass = event.status === 'upcoming' ? 'status-upcoming' : 
+                                 event.status === 'ongoing' ? 'status-ongoing' : 'status-completed';
+                
+                row.innerHTML = `
+                    <td>${event.id}</td>
+                    <td><strong>${event.name}</strong></td>
+                    <td>${event.date}</td>
+                    <td>${event.location}</td>
+                    <td>${event.time}</td>
+                    <td><span class="status-badge ${statusClass}">${event.status}</span></td>
+                    <td>${event.participants || 0}/${event.maxParticipants || 100}</td>
+                    <td>
+                        <button class="action-btn edit" onclick="openEditModal('event', ${event.id})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="deleteItem('event', ${event.id})"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn view" onclick="viewItem('event', ${event.id})"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ==================== UPDATE FORUM POSTS ====================
+        function updateForumPosts() {
+            const container = document.getElementById('forum-posts-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            gitomaDatabase.forumPosts.forEach(post => {
+                const timeAgo = getTimeAgo(post.createdAt);
+                const postDiv = document.createElement('div');
+                postDiv.className = 'forum-post';
+                postDiv.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-author">
+                            <i class="fas fa-user-circle"></i>
+                            <span>${post.author}</span>
+                        </div>
+                        <span class="post-time">${timeAgo}</span>
+                    </div>
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-stats">
+                        <span><i class="fas fa-eye"></i> ${post.views || 0}</span>
+                        <span><i class="fas fa-comment"></i> ${post.comments || 0}</span>
+                        <button class="action-btn edit" onclick="openEditModal('post', ${post.id})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete" onclick="deleteItem('post', ${post.id})"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn view" onclick="viewItem('post', ${post.id})"><i class="fas fa-eye"></i></button>
+                    </div>
+                `;
+                container.appendChild(postDiv);
+            });
+        }
+
+        // ==================== UPDATE MARKETPLACE ====================
+        function updateMarketplace() {
+            const container = document.getElementById('marketplace-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            gitomaDatabase.products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <i class="fas fa-box"></i>
+                        <div class="product-actions">
+                            <button class="product-btn edit" onclick="openEditModal('product', ${product.id})"><i class="fas fa-edit"></i></button>
+                            <button class="product-btn delete" onclick="deleteItem('product', ${product.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <h4>${product.name}</h4>
+                        <p>${product.description}</p>
+                        <div class="product-price">${product.price}</div>
+                        <div class="product-seller">${product.seller} - ${product.village}</div>
+                        <div class="product-contact">
+                            <button class="btn-contact" onclick="contactSeller('${product.contact}')"><i class="fas fa-phone"></i> Kontakt</button>
+                            <button class="btn-whatsapp" onclick="whatsappSeller('${product.contact}', '${product.name}')"><i class="fab fa-whatsapp"></i></button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productCard);
+            });
+        }
+
+        // ==================== UPDATE GALLERY ====================
+        function updateGallery() {
+            const container = document.getElementById('gallery-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            gitomaDatabase.gallery.forEach(photo => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.innerHTML = `
+                    <img src="${photo.url}" alt="${photo.title}">
+                    <div class="gallery-overlay">
+                        <h4>${photo.title}</h4>
+                        <p>${photo.date}</p>
+                    </div>
+                    <div class="gallery-actions">
+                        <button class="gallery-btn edit" onclick="openEditModal('photo', ${photo.id})"><i class="fas fa-edit"></i></button>
+                        <button class="gallery-btn delete" onclick="deleteItem('photo', ${photo.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(galleryItem);
+            });
+        }
+
+        // ==================== UPDATE CONTACT TABLE ====================
+        function updateContactTable() {
+            const tbody = document.getElementById('contact-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            gitomaDatabase.contacts.forEach(contact => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${contact.id}</td>
+                    <td>${contact.name}</td>
+                    <td>${contact.phone}</td>
+                    <td>${contact.email || '-'}</td>
+                    <td>${contact.subject || '-'}</td>
+                    <td>${contact.message.substring(0, 30)}...</td>
+                    <td>${formatDate(contact.createdAt)}</td>
+                    <td>
+                        <button class="action-btn delete" onclick="deleteItem('contact', ${contact.id})"><i class="fas fa-trash"></i></button>
+                        <button class="action-btn view" onclick="viewItem('contact', ${contact.id})"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ==================== UPDATE DATABASE VIEW ====================
+        function updateDatabaseView() {
+            const jsonViewer = document.getElementById('full-json-viewer');
+            if (!jsonViewer) return;
+            
+            jsonViewer.innerHTML = syntaxHighlight(JSON.stringify(gitomaDatabase, null, 2));
+            
+            // Update DB stats in database section
+            const statsContainer = document.getElementById('db-full-stats');
+            if (statsContainer) {
+                statsContainer.innerHTML = '';
+                const stats = [
+                    { label: 'Umuryango', value: gitomaDatabase.community.length },
+                    { label: 'Ibirori', value: gitomaDatabase.events.length },
+                    { label: 'Ikibazo', value: gitomaDatabase.forumPosts.length },
+                    { label: 'Isoko', value: gitomaDatabase.products.length },
+                    { label: 'Ibikorwa', value: gitomaDatabase.gallery.length },
+                    { label: 'Twandikire', value: gitomaDatabase.contacts.length }
+                ];
+                
+                stats.forEach(stat => {
+                    const div = document.createElement('div');
+                    div.className = 'db-stat-item';
+                    div.innerHTML = `<div class="label">${stat.label}</div><div class="value">${stat.value}</div>`;
+                    statsContainer.appendChild(div);
+                });
+            }
+        }
+
+        // ==================== UPDATE FOOTER STATS ====================
+        function updateFooterStats() {
+            document.getElementById('footer-community').textContent = gitomaDatabase.community.length;
+            document.getElementById('footer-events').textContent = gitomaDatabase.events.length;
+            document.getElementById('footer-posts').textContent = gitomaDatabase.forumPosts.length;
+            document.getElementById('footer-products').textContent = gitomaDatabase.products.length;
+            document.getElementById('footer-photos').textContent = gitomaDatabase.gallery.length;
+            document.getElementById('footer-contacts').textContent = gitomaDatabase.contacts.length;
+        }
+
+        // ==================== OPEN REGISTRATION MODAL ====================
+        function openRegistrationModal(type) {
+            const modal = document.getElementById('registrationModal');
+            const title = document.getElementById('modal-title');
+            const fields = document.getElementById('modal-fields');
+            
+            title.innerHTML = `<i class="fas fa-user-plus"></i> Kwiyandikisha - ${getTypeName(type)}`;
+            document.getElementById('reg-type').value = type;
+            
+            let html = '';
+            
+            switch(type) {
+                case 'community':
+                    html = `
+                        <div class="form-group">
+                            <label>Amazina yombi *</label>
+                            <input type="text" id="modal-name" required placeholder="Mukamana Jeanne">
+                        </div>
+                        <div class="form-group">
+                            <label>Telephone *</label>
+                            <input type="tel" id="modal-phone" required placeholder="0788 123 456">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="modal-email" placeholder="email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Umudugudu *</label>
+                            <select id="modal-village" required>
+                                <option value="">Hitamo...</option>
+                                <option value="Gitoma">Gitoma</option>
+                                <option value="Nguvu1">Nguvu1</option>
+                                <option value="Nguvu2">Nguvu2</option>
+                                <option value="Mushongi">Mushongi</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Komite</label>
+                            <input type="text" id="modal-committee" placeholder="Amazi, Ibidukikije, ...">
+                        </div>
+                        <div class="form-group">
+                            <label>Imyaka</label>
+                            <input type="number" id="modal-age" placeholder="Imyaka yawe">
+                        </div>
+                        <div class="form-group">
+                            <label>Icyitonderwa</label>
+                            <textarea id="modal-notes" placeholder="Icyo ushaka kumenyesha..."></textarea>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'event':
+                    html = `
+                        <div class="form-group">
+                            <label>Izina ry'igikorwa *</label>
+                            <input type="text" id="modal-event-name" required placeholder="Umuganda, Amahugurwa, ...">
+                        </div>
+                        <div class="form-group">
+                            <label>Itariki *</label>
+                            <input type="date" id="modal-event-date" required value="2026-03-25">
+                        </div>
+                        <div class="form-group">
+                            <label>Ahabera *</label>
+                            <input type="text" id="modal-event-location" required placeholder="Gitoma Centre">
+                        </div>
+                        <div class="form-group">
+                            <label>Igihe *</label>
+                            <input type="text" id="modal-event-time" required placeholder="8:00-12:00">
+                        </div>
+                        <div class="form-group">
+                            <label>Abantu bazitabira</label>
+                            <input type="number" id="modal-event-max" value="100">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'post':
+                    html = `
+                        <div class="form-group">
+                            <label>Amazina yawe *</label>
+                            <input type="text" id="modal-post-author" required placeholder="Mukamana Jeanne">
+                        </div>
+                        <div class="form-group">
+                            <label>Umutwe *</label>
+                            <input type="text" id="modal-post-title" required placeholder="Ikibazo cy'amazi">
+                        </div>
+                        <div class="form-group">
+                            <label>Ubutumwa *</label>
+                            <textarea id="modal-post-content" required placeholder="Andika ubutumwa..." rows="4"></textarea>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'product':
+                    html = `
+                        <div class="form-group">
+                            <label>Izina ry'igicuruzwa *</label>
+                            <input type="text" id="modal-product-name" required placeholder="Inkoko, Ibirayi, ...">
+                        </div>
+                        <div class="form-group">
+                            <label>Ibisobanuro *</label>
+                            <textarea id="modal-product-desc" required placeholder="Sobanura igicuruzwa..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Igiciro *</label>
+                            <input type="text" id="modal-product-price" required placeholder="8,000 FRW">
+                        </div>
+                        <div class="form-group">
+                            <label>Umugurisha *</label>
+                            <input type="text" id="modal-product-seller" required placeholder="Mukamana J.">
+                        </div>
+                        <div class="form-group">
+                            <label>Umudugudu *</label>
+                            <input type="text" id="modal-product-village" required placeholder="Gitoma">
+                        </div>
+                        <div class="form-group">
+                            <label>Telephone *</label>
+                            <input type="tel" id="modal-product-contact" required placeholder="0788123456">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'photo':
+                    html = `
+                        <div class="form-group">
+                            <label>Umutwe w'ifoto *</label>
+                            <input type="text" id="modal-photo-title" required placeholder="Inama y'abaturage 2026">
+                        </div>
+                        <div class="form-group">
+                            <label>Itariki *</label>
+                            <input type="date" id="modal-photo-date" required value="2026-03-10">
+                        </div>
+                        <div class="form-group">
+                            <label>Photo URL *</label>
+                            <input type="url" id="modal-photo-url" required placeholder="https://images.unsplash.com/...">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'contact':
+                    html = `
+                        <div class="form-group">
+                            <label>Amazina yawe *</label>
+                            <input type="text" id="modal-contact-name" required placeholder="Mukamana Jeanne">
+                        </div>
+                        <div class="form-group">
+                            <label>Telephone *</label>
+                            <input type="tel" id="modal-contact-phone" required placeholder="0788 123 456">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="modal-contact-email" placeholder="email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Intego *</label>
+                            <select id="modal-contact-subject" required>
+                                <option value="">Hitamo...</option>
+                                <option value="issue">Ikibazo</option>
+                                <option value="event">Ibirori</option>
+                                <option value="market">Isoko</option>
+                                <option value="help">Ubufasha</option>
+                                <option value="other">Ibindi</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ubutumwa *</label>
+                            <textarea id="modal-contact-message" required placeholder="Andika ubutumwa bwawe..." rows="4"></textarea>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            fields.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        // ==================== SAVE REGISTRATION ====================
+        function saveRegistration() {
+            const type = document.getElementById('reg-type').value;
+            const now = new Date().toISOString();
+            let newItem = {};
+            
+            switch(type) {
+                case 'community':
+                    newItem = {
+                        id: generateId(gitomaDatabase.community),
+                        name: document.getElementById('modal-name').value,
+                        phone: document.getElementById('modal-phone').value,
+                        email: document.getElementById('modal-email').value,
+                        village: document.getElementById('modal-village').value,
+                        committee: document.getElementById('modal-committee').value,
+                        age: document.getElementById('modal-age').value,
+                        notes: document.getElementById('modal-notes').value,
+                        createdAt: now
+                    };
+                    gitomaDatabase.community.push(newItem);
+                    break;
+                    
+                case 'event':
+                    newItem = {
+                        id: generateId(gitomaDatabase.events),
+                        name: document.getElementById('modal-event-name').value,
+                        date: document.getElementById('modal-event-date').value,
+                        location: document.getElementById('modal-event-location').value,
+                        time: document.getElementById('modal-event-time').value,
+                        status: 'upcoming',
+                        participants: 0,
+                        maxParticipants: parseInt(document.getElementById('modal-event-max').value) || 100,
+                        createdAt: now
+                    };
+                    gitomaDatabase.events.push(newItem);
+                    break;
+                    
+                case 'post':
+                    newItem = {
+                        id: generateId(gitomaDatabase.forumPosts),
+                        author: document.getElementById('modal-post-author').value,
+                        title: document.getElementById('modal-post-title').value,
+                        content: document.getElementById('modal-post-content').value,
+                        comments: 0,
+                        views: 0,
+                        createdAt: now
+                    };
+                    gitomaDatabase.forumPosts.push(newItem);
+                    break;
+                    
+                case 'product':
+                    newItem = {
+                        id: generateId(gitomaDatabase.products),
+                        name: document.getElementById('modal-product-name').value,
+                        description: document.getElementById('modal-product-desc').value,
+                        price: document.getElementById('modal-product-price').value,
+                        seller: document.getElementById('modal-product-seller').value,
+                        village: document.getElementById('modal-product-village').value,
+                        contact: document.getElementById('modal-product-contact').value,
+                        createdAt: now
+                    };
+                    gitomaDatabase.products.push(newItem);
+                    break;
+                    
+                case 'photo':
+                    newItem = {
+                        id: generateId(gitomaDatabase.gallery),
+                        title: document.getElementById('modal-photo-title').value,
+                        date: document.getElementById('modal-photo-date').value,
+                        url: document.getElementById('modal-photo-url').value,
+                        createdAt: now
+                    };
+                    gitomaDatabase.gallery.push(newItem);
+                    break;
+                    
+                case 'contact':
+                    newItem = {
+                        id: generateId(gitomaDatabase.contacts),
+                        name: document.getElementById('modal-contact-name').value,
+                        phone: document.getElementById('modal-contact-phone').value,
+                        email: document.getElementById('modal-contact-email').value,
+                        subject: document.getElementById('modal-contact-subject').value,
+                        message: document.getElementById('modal-contact-message').value,
+                        createdAt: now
+                    };
+                    gitomaDatabase.contacts.push(newItem);
+                    break;
+            }
+            
+            saveDatabase();
+            closeModal('registrationModal');
+            showToast(`Kwiyandikisha byakozwe neza!`, 'success');
+        }
+
+        // ==================== OPEN EDIT MODAL ====================
+        function openEditModal(type, id) {
+            const modal = document.getElementById('editModal');
+            const title = document.getElementById('edit-modal-title');
+            const fields = document.getElementById('edit-modal-fields');
+            
+            title.innerHTML = `<i class="fas fa-edit"></i> Hindura ${getTypeName(type)}`;
+            
+            let item = null;
+            let array = [];
+            
+            switch(type) {
+                case 'community': array = gitomaDatabase.community; break;
+                case 'event': array = gitomaDatabase.events; break;
+                case 'post': array = gitomaDatabase.forumPosts; break;
+                case 'product': array = gitomaDatabase.products; break;
+                case 'photo': array = gitomaDatabase.gallery; break;
+                case 'contact': array = gitomaDatabase.contacts; break;
+            }
+            
+            item = array.find(i => i.id === id);
+            if (!item) return;
+            
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-type').value = type;
+            
+            let html = '';
+            switch(type) {
+                case 'community':
+                    html = `
+                        <div class="form-group">
+                            <label>Amazina *</label>
+                            <input type="text" id="edit-name" value="${item.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telephone *</label>
+                            <input type="tel" id="edit-phone" value="${item.phone}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="edit-email" value="${item.email || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Umudugudu *</label>
+                            <input type="text" id="edit-village" value="${item.village}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Komite</label>
+                            <input type="text" id="edit-committee" value="${item.committee || ''}">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'event':
+                    html = `
+                        <div class="form-group">
+                            <label>Izina *</label>
+                            <input type="text" id="edit-event-name" value="${item.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Itariki *</label>
+                            <input type="date" id="edit-event-date" value="${item.date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ahabera *</label>
+                            <input type="text" id="edit-event-location" value="${item.location}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Igihe *</label>
+                            <input type="text" id="edit-event-time" value="${item.time}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Imiterere</label>
+                            <select id="edit-event-status">
+                                <option value="upcoming" ${item.status === 'upcoming' ? 'selected' : ''}>Itegerejwe</option>
+                                <option value="ongoing" ${item.status === 'ongoing' ? 'selected' : ''}>Iri gukorwa</option>
+                                <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Cyari gukorwa</option>
+                            </select>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'post':
+                    html = `
+                        <div class="form-group">
+                            <label>Umutwe *</label>
+                            <input type="text" id="edit-post-title" value="${item.title}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ubutumwa *</label>
+                            <textarea id="edit-post-content" required rows="4">${item.content}</textarea>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'product':
+                    html = `
+                        <div class="form-group">
+                            <label>Izina *</label>
+                            <input type="text" id="edit-product-name" value="${item.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ibisobanuro</label>
+                            <textarea id="edit-product-desc">${item.description}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Igiciro *</label>
+                            <input type="text" id="edit-product-price" value="${item.price}" required>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            fields.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        // ==================== UPDATE ITEM ====================
+        function updateItem() {
+            const id = parseInt(document.getElementById('edit-id').value);
+            const type = document.getElementById('edit-type').value;
+            
+            let array = [];
+            switch(type) {
+                case 'community': array = gitomaDatabase.community; break;
+                case 'event': array = gitomaDatabase.events; break;
+                case 'post': array = gitomaDatabase.forumPosts; break;
+                case 'product': array = gitomaDatabase.products; break;
+                case 'photo': array = gitomaDatabase.gallery; break;
+                case 'contact': array = gitomaDatabase.contacts; break;
+            }
+            
+            const index = array.findIndex(i => i.id === id);
+            if (index === -1) return;
+            
+            switch(type) {
+                case 'community':
+                    array[index].name = document.getElementById('edit-name').value;
+                    array[index].phone = document.getElementById('edit-phone').value;
+                    array[index].email = document.getElementById('edit-email').value;
+                    array[index].village = document.getElementById('edit-village').value;
+                    array[index].committee = document.getElementById('edit-committee').value;
+                    break;
+                    
+                case 'event':
+                    array[index].name = document.getElementById('edit-event-name').value;
+                    array[index].date = document.getElementById('edit-event-date').value;
+                    array[index].location = document.getElementById('edit-event-location').value;
+                    array[index].time = document.getElementById('edit-event-time').value;
+                    array[index].status = document.getElementById('edit-event-status').value;
+                    break;
+                    
+                case 'post':
+                    array[index].title = document.getElementById('edit-post-title').value;
+                    array[index].content = document.getElementById('edit-post-content').value;
+                    break;
+                    
+                case 'product':
+                    array[index].name = document.getElementById('edit-product-name').value;
+                    array[index].description = document.getElementById('edit-product-desc').value;
+                    array[index].price = document.getElementById('edit-product-price').value;
+                    break;
+            }
+            
+            saveDatabase();
+            closeModal('editModal');
+            showToast(`${getTypeName(type)} yahinduwe neza!`, 'success');
+        }
+
+        // ==================== DELETE ITEM ====================
+        function deleteItem(type, id) {
+            if (!confirm('Wiboneye niba ushaka gusiba iki kintu?')) return;
+            
+            let array = [];
+            switch(type) {
+                case 'community': array = gitomaDatabase.community; break;
+                case 'event': array = gitomaDatabase.events; break;
+                case 'post': array = gitomaDatabase.forumPosts; break;
+                case 'product': array = gitomaDatabase.products; break;
+                case 'photo': array = gitomaDatabase.gallery; break;
+                case 'contact': array = gitomaDatabase.contacts; break;
+            }
+            
+            const index = array.findIndex(i => i.id === id);
+            if (index !== -1) {
+                array.splice(index, 1);
+                saveDatabase();
+                showToast(`${getTypeName(type)} yasibwe neza!`, 'success');
+            }
+        }
+
+        // ==================== VIEW ITEM ====================
+        function viewItem(type, id) {
+            let array = [];
+            switch(type) {
+                case 'community': array = gitomaDatabase.community; break;
+                case 'event': array = gitomaDatabase.events; break;
+                case 'post': array = gitomaDatabase.forumPosts; break;
+                case 'product': array = gitomaDatabase.products; break;
+                case 'photo': array = gitomaDatabase.gallery; break;
+                case 'contact': array = gitomaDatabase.contacts; break;
+            }
+            
+            const item = array.find(i => i.id === id);
+            if (item) {
+                alert(JSON.stringify(item, null, 2));
+            }
+        }
+
+        // ==================== CONTACT SELLER ====================
+        function contactSeller(phone) {
+            showToast(`Hamagara: ${phone}`, 'success');
+        }
+
+        // ==================== WHATSAPP SELLER ====================
+        function whatsappSeller(phone, product) {
+            window.open(`https://wa.me/${phone}?text=Injoro? Nshaka kugura ${product}`, '_blank');
+        }
+
+        // ==================== GENERATE ID ====================
+        function generateId(array) {
+            if (array.length === 0) return 1;
+            return Math.max(...array.map(i => i.id)) + 1;
+        }
+
+        // ==================== GET TYPE NAME ====================
+        function getTypeName(type) {
+            const names = {
+                'community': 'Umuryango',
+                'event': 'Ibirori',
+                'post': 'Ikibazo',
+                'product': 'Isoko',
+                'photo': 'Ibikorwa',
+                'contact': 'Twandikire'
+            };
+            return names[type] || type;
+        }
+
+        // ==================== FORMAT DATE ====================
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('rw-RW', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // ==================== GET TIME AGO ====================
+        function getTimeAgo(dateString) {
+            if (!dateString) return 'unknown';
+            const now = new Date();
+            const past = new Date(dateString);
+            const diffMs = now - past;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'ubu';
+            if (diffMins < 60) return `${diffMins} min`;
+            if (diffHours < 24) return `${diffHours} hours`;
+            return `${diffDays} days`;
+        }
+
+        // ==================== SYNTAX HIGHLIGHT ====================
+        function syntaxHighlight(json) {
+            if (!json) return '';
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span style="color: ' + getColor(cls) + '">' + match + '</span>';
+            });
+        }
+
+        function getColor(cls) {
+            const colors = {
+                'key': '#e6db74',
+                'string': '#a6e22e',
+                'number': '#ae81ff',
+                'boolean': '#66d9ef',
+                'null': '#f92672'
+            };
+            return colors[cls] || '#ffffff';
+        }
+
+        // ==================== SHOW/HIDE SECTIONS ====================
+        function showSection(section) {
+            const sections = ['dashboard', 'community', 'events', 'forum', 'marketplace', 'gallery', 'database', 'contact'];
+            sections.forEach(s => {
+                document.getElementById(s + '-section').style.display = 'none';
+                document.getElementById('nav-' + s)?.classList.remove('active-nav');
+            });
+            
+            document.getElementById(section + '-section').style.display = 'block';
+            document.getElementById('nav-' + section)?.classList.add('active-nav');
+        }
+
+        // ==================== HIDE REGISTRATION FORM ====================
+        function hideRegistrationForm(type) {
+            document.getElementById(type + '-reg-form').style.display = 'none';
+        }
+
+        // ==================== CLOSE MODAL ====================
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // ==================== SHOW TOAST ====================
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.style.display = 'flex';
+            
+            if (type === 'success') {
+                toast.style.borderLeftColor = '#4caf50';
+                toast.querySelector('i').style.color = '#4caf50';
+            } else {
+                toast.style.borderLeftColor = '#f44336';
+                toast.querySelector('i').style.color = '#f44336';
+            }
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // ==================== UPDATE TIME ====================
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('rw-RW');
+            document.getElementById('current-date').textContent = now.toLocaleDateString('rw-RW', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+        }
+
+        function startTimeUpdate() {
+            updateTime();
+            setInterval(updateTime, 1000);
+        }
+
+        // ==================== EXPORT DATABASE ====================
+        function exportDatabase() {
+            const dataStr = JSON.stringify(gitomaDatabase, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportName = `gitoma-db-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', exportName);
+            link.click();
+            
+            showToast('Database yawe yakuwe neza!', 'success');
+        }
+
+        // ==================== IMPORT DATABASE ====================
+        function importDatabase() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (confirm('Wiboneye niba ushaka gusimbuza database yawe?')) {
+                            gitomaDatabase = imported;
+                            saveDatabase();
+                            showToast('Database yinjijwe neza!', 'success');
+                        }
+                    } catch(err) {
+                        showToast('Dosiye ntiyari JSON ifite amakosa!', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // ==================== CLEAR DATABASE ====================
+        function clearDatabase() {
+            if (confirm('Wiboneye neza? Ibi bizasiba byose mu database!')) {
+                gitomaDatabase = {
+                    community: [],
+                    events: [],
+                    forumPosts: [],
+                    products: [],
+                    gallery: [],
+                    contacts: []
+                };
+                saveDatabase();
+                showToast('Database yasibwe neza!', 'success');
+            }
+        }
+
+        // ==================== REFRESH DATABASE ====================
+        function refreshDatabase() {
+            updateAllDisplays();
+            showToast('Database yonguwe!', 'success');
+        }
+
+        // ==================== INITIALIZE ====================
+        window.onload = function() {
+            initDatabase();
+        };
+
+        // ==================== CLOSE MODALS ON OUTSIDE CLICK ====================
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
